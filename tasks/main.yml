@@ -46,6 +46,34 @@
   with_items:
     - url: "{{ traefik_binary_url }}"
       dest: "{{ traefik_bin_path }}"
+  when: traefik_binary_url is not search("tar.gz")
+
+- name: Download Traefik binary archive
+  unarchive:
+    src: "{{ item.url }}"
+    dest: "{{ item.dest }}"
+    remote_src: yes
+    owner: root
+    group: root
+    mode: 0755
+  with_items:
+    - url: "{{ traefik_binary_url }}"
+      dest: /tmp/
+  when: traefik_binary_url is search("tar.gz")
+
+- name: Move Traefik binary from archive
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    remote_src: yes
+    owner: root
+    group: root
+    mode: 0755
+    force: "{{ traefik_update | bool }}"
+  with_items:
+    - src: /tmp/traefik
+      dest: "{{ traefik_bin_path }}"
+  when: traefik_binary_url is search("tar.gz")
 
 - name: Ensure traefik service is enabled and running
   systemd:
