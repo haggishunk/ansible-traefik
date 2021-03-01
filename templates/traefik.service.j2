@@ -5,7 +5,9 @@ Description=Traefik
 
 [Service]
 Type=notify
-ExecStart={{ traefik_bin_path }} --configFile={{ traefik_config_file }}
+# command argument flags changed in v1 -> v2
+# eg, --configFile -> --configfile
+ExecStart={{ traefik_bin_path }} --configfile={{ traefik_config_file }}
 Restart=on-failure
 
 [Install]
